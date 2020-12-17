@@ -24,32 +24,17 @@ if !exists("g:imselect_path")
   let g:imselect_path = expand('<sfile>:p:h') . "/im-select "
 endif
 
-let s:smartim_set_normal_mode_to_english = 0
-let s:smartim_set_insert_mode_to_chinese = 0
-
-function! Smartim_set_fast_mode()
-  let s:smartim_set_normal_mode_to_english = 0
-  let s:smartim_set_insert_mode_to_chinese = 0
-endfunction
-
-function! Smartim_set_english_mode()
-  let s:smartim_set_normal_mode_to_english = 1
-  let s:smartim_set_insert_mode_to_chinese = 0
-endfunction
-
-function! Smartim_set_chinese_mode()
-  let s:smartim_set_normal_mode_to_english = 1
-  let s:smartim_set_insert_mode_to_chinese = 1
-endfunction
+let g:smartim_enter_as_chinese = 0
 
 function! Smartim_on_normal()
-  if s:smartim_set_normal_mode_to_english == 1
+  if g:smartim_enter_as_chinese == 1
+    let g:smartim_enter_as_chinese = 0
     silent call system(g:imselect_path . g:smartim_english)
   endif
 endfunction
 
 function! Smartim_on_insert()
-  if s:smartim_set_insert_mode_to_chinese == 1
+  if g:smartim_enter_as_chinese == 1
     silent call system(g:imselect_path . g:smartim_chinese)
   endif
 endfunction
