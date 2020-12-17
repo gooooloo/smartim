@@ -7,67 +7,52 @@
 " License:      MIT
 " =============================================================================
 
-if exists('g:smartim_loaded') || &cp
+if exists('s:smartim_loaded') || &cp
   finish
 endif
-let g:smartim_loaded = 1
+let s:smartim_loaded = 1
 
-if !exists("g:smartim_default")
-  let g:smartim_default = "com.apple.keylayout.US"
+if !exists("g:smartim_english")
+  let g:smartim_english = "com.apple.keylayout.US"
 endif
 
 if !exists("g:smartim_chinese")
   let g:smartim_chinese = "com.apple.inputmethod.SCIM.Shuangpin"
 endif
 
-if !exists("g:smartim_disable")
-  let g:smartim_disable = 0
+if !exists("g:imselect_path")
+  let g:imselect_path = expand('<sfile>:p:h') . "/im-select "
 endif
 
-let g:smartim_type = g:smartim_default
+let s:smartim_set_normal_mode_to_english = 0
+let s:smartim_set_insert_mode_to_chinese = 0
 
-if !exists("s:imselect_path")
-  let s:imselect_path = expand('<sfile>:p:h') . "/im-select "
-endif
-
-function! Smartim_SelectDefault()
-  if g:smartim_disable == 1
-    return
-  endif
-
-  if g:smartim_type == g:smartim_default
-    return
-  endif
-
-  let g:smartim_type = g:smartim_default
-  silent call system(s:imselect_path . g:smartim_default)
+function! Smartim_set_fast_mode()
+  let s:smartim_set_normal_mode_to_english = 0
+  let s:smartim_set_insert_mode_to_chinese = 0
 endfunction
 
-function! Smartim_SelectChinese()
-  if g:smartim_disable == 1
-    return
-  endif
-
-  if g:smartim_type == g:smartim_chinese
-    return
-  endif
-
-  let g:smartim_type = g:smartim_chinese
-  silent call system(s:imselect_path . g:smartim_chinese)
+function! Smartim_set_english_mode()
+  let s:smartim_set_normal_mode_to_english = 1
+  let s:smartim_set_insert_mode_to_chinese = 0
 endfunction
 
-function! Smartim_SelectSwitch()
-  if g:smartim_disable == 1
-    return
-  endif
+function! Smartim_set_chinese_mode()
+  let s:smartim_set_normal_mode_to_english = 1
+  let s:smartim_set_insert_mode_to_chinese = 1
+endfunction
 
-  if g:smartim_type == g:smartim_default
-    let g:smartim_type = g:smartim_chinese
-    silent call system(s:imselect_path . g:smartim_chinese)
-  else
-    let g:smartim_type = g:smartim_default
-    silent call system(s:imselect_path . g:smartim_default)
+function! Smartim_on_normal()
+  if s:smartim_set_normal_mode_to_english == 1
+    silent call system(g:imselect_path . g:smartim_english)
   endif
 endfunction
 
-autocmd InsertLeave * call Smartim_SelectDefault()
+function! Smartim_on_insert()
+  if s:smartim_set_insert_mode_to_chinese == 1
+    silent call system(g:imselect_path . g:smartim_chinese)
+  endif
+endfunction
+
+autocmd InsertLeave * call Smartim_on_normal()
+autocmd InsertEnter * call Smartim_on_insert()
