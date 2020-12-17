@@ -24,6 +24,8 @@ if !exists("g:smartim_disable")
   let g:smartim_disable = 0
 endif
 
+let g:smartim_type = g:smartim_default
+
 if !exists("s:imselect_path")
   let s:imselect_path = expand('<sfile>:p:h') . "/im-select "
 endif
@@ -33,6 +35,11 @@ function! Smartim_SelectDefault()
     return
   endif
 
+  if g:smartim_type == g:smartim_default
+    return
+  endif
+
+  let g:smartim_type = g:smartim_default
   silent call system(s:imselect_path . g:smartim_default)
 endfunction
 
@@ -41,7 +48,26 @@ function! Smartim_SelectChinese()
     return
   endif
 
+  if g:smartim_type == g:smartim_chinese
+    return
+  endif
+
+  let g:smartim_type = g:smartim_chinese
   silent call system(s:imselect_path . g:smartim_chinese)
+endfunction
+
+function! Smartim_SelectSwitch()
+  if g:smartim_disable == 1
+    return
+  endif
+
+  if g:smartim_type == g:smartim_default
+    let g:smartim_type = g:smartim_chinese
+    silent call system(s:imselect_path . g:smartim_chinese)
+  else
+    let g:smartim_type = g:smartim_default
+    silent call system(s:imselect_path . g:smartim_default)
+  endif
 endfunction
 
 autocmd InsertLeave * call Smartim_SelectDefault()
