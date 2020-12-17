@@ -16,38 +16,32 @@ if !exists("g:smartim_default")
   let g:smartim_default = "com.apple.keylayout.US"
 endif
 
+if !exists("g:smartim_chinese")
+  let g:smartim_chinese = "com.apple.inputmethod.SCIM.Shuangpin"
+endif
+
 if !exists("g:smartim_disable")
   let g:smartim_disable = 0
 endif
 
-if !exists("g:smartim_debug")
-  let g:smartim_debug = 0
+if !exists("s:imselect_path")
+  let s:imselect_path = expand('<sfile>:p:h') . "/im-select "
 endif
-
-let s:imselect_path = expand('<sfile>:p:h') . "/im-select "
-let s:smartim_debug_output = $HOME . "/vim_smartim_debug_output"
 
 function! Smartim_SelectDefault()
   if g:smartim_disable == 1
     return
   endif
 
-  silent let b:saved_im = system(s:imselect_path)
   silent call system(s:imselect_path . g:smartim_default)
 endfunction
 
-function! Smartim_SelectSaved()
+function! Smartim_SelectChinese()
   if g:smartim_disable == 1
     return
   endif
 
-  if exists("b:saved_im")
-    silent call system(s:imselect_path . b:saved_im)
-  endif
+  silent call system(s:imselect_path . g:smartim_chinese)
 endfunction
 
-augroup smartim
-  autocmd!
-  autocmd InsertLeave * call Smartim_SelectDefault()
-  autocmd InsertEnter * call Smartim_SelectSaved()
-augroup end
+autocmd InsertLeave * call Smartim_SelectDefault()
